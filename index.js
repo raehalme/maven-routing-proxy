@@ -26,17 +26,10 @@ function resolveRepository(path) {
             logger.debug("Testing if " + path + " starts with " + include);
             if (path.startsWith(include)) {
                 logger.debug("Found a match!");
-                var username = null, password = null;
-                if (repository.username != null) {
-                    logger.debug("Resolving authentication from environment variables "
-                            + repository.username + " and " + repository.password);
-                    username = process.env[repository.username];
-                    password = process.env[repository.password];
-                }
                 return {
                     "url": url,
-                    "username": username,
-                    "password": password
+                    "username": repository.username,
+                    "password": repository.password
                 };
             }
         }
@@ -58,6 +51,24 @@ else if (config.repositories["default"] == null) {
     logger.warn("No 'default' repository found in config.json");
 }
 
+for (var url in config.repositories) {
+    logger.debug("Processing repository " + url);
+    var repository = config.repositories[url];
+    if (repository.username != null) {
+        repository.username = replaceEnv(repository.username);
+    }
+    if (repository.password != null) {
+        repository.password = replaceEnv(repository.password);
+    }
+}
+
+function replaceEnv(value) {
+    return value.replace(/%([a-zA-Z0-9\-_]+)%/g, function(s, name) {
+        var value = process.env[name];
+        logger.debug("Replacing " + name + " with " + value);
+	return value;
+    });
+}
 
 var proxy = httpProxy.createProxyServer({});
 
@@ -82,6 +93,6 @@ http.createServer(function(req, res) {
     }
 }).listen(8181);
 
-//proxy.on('proxyReq', function(proxyReq, req, res, options) {
-//  proxyReq.setHeader('X-Proxy', 'maven-routing-proxy 0.1');
-//});
+proxy.on('proxyReq', function(proxyReq, req, res, options) {
+  proxyReq.setHeader('X-Proxy', 'maven-routing-proxy 0.1');
+});
