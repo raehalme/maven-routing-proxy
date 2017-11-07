@@ -50,6 +50,15 @@ function resolveRepository(path) {
     };
 }
 
+if (config.repositories == null || Object.keys(config.repositories).length == 0) {
+    logger.error("Please configure repositories in config.json.");
+    return;
+}
+else if (config.repositories["default"] == null) {
+    logger.warn("No 'default' repository found in config.json");
+}
+
+
 var proxy = httpProxy.createProxyServer({});
 
 http.createServer(function(req, res) {
