@@ -1,6 +1,6 @@
 {
   "name": "maven-routing-proxy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple repository proxy for Maven which routes requests to proper repositories based on groupId.",
   "main": "index.js",
   "scripts": {
