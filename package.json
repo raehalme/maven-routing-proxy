@@ -1,0 +1,29 @@
+{
+  "name": "maven-routing-proxy",
+  "version": "0.0.1",
+  "description": "A simple repository proxy for Maven which routes requests to proper repositories based on groupId.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:raehalme/maven-routing-proxy.git"
+  },
+  "keywords": [
+    "maven"
+  ],
+  "author": "Thomas Raehalme",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/raehalme/maven-routing-proxy",
+  "bin": {
+    "mvnproxy": "./index.js"
+  },
+  "dependencies": {
+    "config.json": "0.0.4",
+    "http-proxy": "1.16.2"
+  },
+  "devDependencies": {
+  }
+}
