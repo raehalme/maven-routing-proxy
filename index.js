@@ -2,9 +2,10 @@
 
 'use strict';
 
-var http = require('http'),
-    httpProxy = require('http-proxy'),
-    config = require('config.json')('./config.json');
+const http = require('http'),
+      httpProxy = require('http-proxy'),
+      config = require('config.json')('./config.json'),
+      logger = require('winston');
 
 function resolveRepository(path) {
     for (var url in config.repositories) {
@@ -12,7 +13,7 @@ function resolveRepository(path) {
             continue;
         }
         var repository = config.repositories[url];
-        console.log("Processing repository " + url);
+        logger.debug("Processing repository " + url);
         var includes = repository.include;
         for (let include of includes) {
             include = include.replace(".", "/");
@@ -22,12 +23,12 @@ function resolveRepository(path) {
             if (!include.endsWith("/")) {
                 include = include + "/";
             }
-            console.log("Testing if " + path + " starts with " + include);
+            logger.debug("Testing if " + path + " starts with " + include);
             if (path.startsWith(include)) {
-                console.log("Found a match!");
+                logger.debug("Found a match!");
                 var username = null, password = null;
                 if (repository.username != null) {
-                    console.log("Resolving authentication from environment variables "
+                    logger.debug("Resolving authentication from environment variables "
                             + repository.username + " and " + repository.password);
                     username = process.env[repository.username];
                     password = process.env[repository.password];
@@ -41,7 +42,7 @@ function resolveRepository(path) {
         }
     };
 
-    console.log("Returning default repository");
+    logger.debug("Returning default repository");
     return {
         "url": config.repositories["default"],
         "username": null,
@@ -58,7 +59,7 @@ http.createServer(function(req, res) {
                 + new Buffer(repository.username + ":" + repository.password, "ascii")
                         .toString("base64");
     }
-    console.log("Dispatching " + req.url + " to " + repository.url + " (auth: " + (repository.username != null) + ")");
+    logger.info("Dispatching " + req.url + " to " + repository.url + " (auth: " + (repository.username != null) + ")");
     proxy.web(req, res, {
         changeOrigin: true,
         target: repository.url

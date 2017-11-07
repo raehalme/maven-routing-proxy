@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "config.json": "0.0.4",
-    "http-proxy": "1.16.2"
+    "http-proxy": "1.16.2",
+    "winston": "2.4.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
