@@ -95,6 +95,7 @@ var proxy = httpProxy.createProxyServer({});
 http.createServer(function(req, res) {
     var repository = resolveRepository(req.url);
     if (repository.url == null) {
+        logger.error("No repository matching " + req.url);
         res.writeHead(404, { "Content-Type": "text/plain" });
         res.write("No repository found matching " + req.url);
         res.end();
@@ -105,7 +106,7 @@ http.createServer(function(req, res) {
                     + new Buffer(repository.username + ":" + repository.password, "ascii")
                             .toString("base64");
         }
-        logger.info("Dispatching " + req.url + " to " + repository.url + " (auth: " + (repository.username != null) + ")");
+        logger.debug("Dispatching " + req.url + " to " + repository.url + " (auth: " + (repository.username != null) + ")");
         proxy.web(req, res, {
             changeOrigin: true,
             target: repository.url
