@@ -52,7 +52,6 @@ else if (config.repositories["default"] == null) {
 }
 
 for (var url in config.repositories) {
-    logger.debug("Processing repository " + url);
     var repository = config.repositories[url];
     if (repository.username != null) {
         repository.username = replaceEnv(repository.username);
@@ -60,6 +59,11 @@ for (var url in config.repositories) {
     if (repository.password != null) {
         repository.password = replaceEnv(repository.password);
     }
+    var include = repository.include;
+    if (typeof include === undefined || include == null) {
+        include = "all";
+    }
+    logger.info("Serving " + include + " from " + url + " (username: " + repository.username + ")");
 }
 
 function replaceEnv(value) {
