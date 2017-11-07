@@ -76,9 +76,13 @@ function replaceEnv(value, fatal) {
     return value.replace(/%([a-zA-Z0-9\-_]+)%/g, function(s, name) {
         var value = process.env[name];
         if (typeof value === 'undefined') {
-            logger.warn("Environment variable " + name + " has not been defined");
             if (fatal) {
+                logger.error("Environment variable " + name + " has not been defined");
                 process.exit(1);
+            }
+            else {
+                logger.warn("Environment variable " + name + " has not been defined");
+                value = "";
             }
         }
         logger.debug("Replacing " + name + " with " + value);
