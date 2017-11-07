@@ -63,16 +63,23 @@ var proxy = httpProxy.createProxyServer({});
 
 http.createServer(function(req, res) {
     var repository = resolveRepository(req.url);
-    if (repository.username != null) {
-        req.headers.authorization = "Basic "
-                + new Buffer(repository.username + ":" + repository.password, "ascii")
-                        .toString("base64");
+    if (repository.url == null) {
+	res.writeHead(404, { "Content-Type": "text/plain" });
+	res.write("No repository found matching " + req.url);
+	res.end();
     }
-    logger.info("Dispatching " + req.url + " to " + repository.url + " (auth: " + (repository.username != null) + ")");
-    proxy.web(req, res, {
-        changeOrigin: true,
-        target: repository.url
-    });
+    else {
+        if (repository.username != null) {
+            req.headers.authorization = "Basic "
+                    + new Buffer(repository.username + ":" + repository.password, "ascii")
+                            .toString("base64");
+        }
+        logger.info("Dispatching " + req.url + " to " + repository.url + " (auth: " + (repository.username != null) + ")");
+        proxy.web(req, res, {
+            changeOrigin: true,
+            target: repository.url
+        });
+    }
 }).listen(8181);
 
 //proxy.on('proxyReq', function(proxyReq, req, res, options) {
