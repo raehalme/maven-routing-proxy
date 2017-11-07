@@ -7,6 +7,8 @@ const http = require('http'),
       config = require('config.json')('./config.json'),
       logger = require('winston');
 
+const PORT = 8181;
+
 function resolveRepository(path) {
     for (var url in config.repositories) {
         if (url == "default" || !config.repositories.hasOwnProperty(url)) {
@@ -105,7 +107,9 @@ http.createServer(function(req, res) {
             target: repository.url
         });
     }
-}).listen(8181);
+}).listen(PORT);
+
+logger.info("Listening on port " + PORT);
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
   proxyReq.setHeader('X-Proxy', 'maven-routing-proxy 0.1');
