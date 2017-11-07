@@ -52,12 +52,16 @@ else if (config.repositories["default"] == null) {
 }
 
 for (var url in config.repositories) {
+    if (url == "default") {
+        continue;
+    }
+
     var repository = config.repositories[url];
     if (repository.username != null) {
-        repository.username = replaceEnv(repository.username);
+        repository.username = replaceEnv(repository.username, true);
     }
     if (repository.password != null) {
-        repository.password = replaceEnv(repository.password);
+        repository.password = replaceEnv(repository.password, true);
     }
     var include = repository.include;
     if (typeof include === undefined || include == null) {
@@ -66,9 +70,15 @@ for (var url in config.repositories) {
     logger.info("Serving " + include + " from " + url + " (username: " + repository.username + ")");
 }
 
-function replaceEnv(value) {
+function replaceEnv(value, fatal) {
     return value.replace(/%([a-zA-Z0-9\-_]+)%/g, function(s, name) {
         var value = process.env[name];
+	if (typeof value === 'undefined') {
+	    logger.warn("Environment variable " + name + " has not been defined");
+	    if (fatal) {
+                process.exit(1);
+            }
+	}
         logger.debug("Replacing " + name + " with " + value);
 	return value;
     });
