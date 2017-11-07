@@ -73,14 +73,14 @@ for (var url in config.repositories) {
 function replaceEnv(value, fatal) {
     return value.replace(/%([a-zA-Z0-9\-_]+)%/g, function(s, name) {
         var value = process.env[name];
-	if (typeof value === 'undefined') {
-	    logger.warn("Environment variable " + name + " has not been defined");
-	    if (fatal) {
+        if (typeof value === 'undefined') {
+            logger.warn("Environment variable " + name + " has not been defined");
+            if (fatal) {
                 process.exit(1);
             }
-	}
+        }
         logger.debug("Replacing " + name + " with " + value);
-	return value;
+        return value;
     });
 }
 
@@ -89,9 +89,9 @@ var proxy = httpProxy.createProxyServer({});
 http.createServer(function(req, res) {
     var repository = resolveRepository(req.url);
     if (repository.url == null) {
-	res.writeHead(404, { "Content-Type": "text/plain" });
-	res.write("No repository found matching " + req.url);
-	res.end();
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.write("No repository found matching " + req.url);
+        res.end();
     }
     else {
         if (repository.username != null) {
