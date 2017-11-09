@@ -49,9 +49,6 @@ if (config.repositories == null || Object.keys(config.repositories).length == 0)
     logger.error("Please configure repositories in config.json.");
     return;
 }
-else if (config.repositories["default"] == null) {
-    logger.warn("No 'default' repository found in config.json");
-}
 
 for (var url in config.repositories) {
     if (url == "default") {
@@ -70,6 +67,13 @@ for (var url in config.repositories) {
         include = "all";
     }
     logger.info("Serving " + include + " from " + url + " (username: " + repository.username + ")");
+}
+
+if (config.repositories["default"] == null) {
+    logger.warn("No 'default' repository found in config.json");
+}
+else {
+    logger.info("The default repository is " + config.repositories["default"]);
 }
 
 function replaceEnv(value, fatal) {
