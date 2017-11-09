@@ -120,6 +120,12 @@ http.createServer(function(req, res) {
 
 logger.info("Listening on port " + PORT);
 
-proxy.on('proxyReq', function(proxyReq, req, res, options) {
-  proxyReq.setHeader('X-Proxy', 'maven-routing-proxy 0.1');
+proxy.on('error', function (err, req, res) {
+  var message = "Unable to load " + req.url + ": " + err.toString();
+  logger.error(message);
+  res.writeHead(503, {
+    'Content-Type': 'text/plain'
+  });
+  res.end(message);
 });
+
